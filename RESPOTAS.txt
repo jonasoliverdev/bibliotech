@@ -1,0 +1,22 @@
+BIBLIOTECH — RESPOSTAS DA ATIVIDADE
+====================================
+
+1. Integração: Que problema de integração entre front-end e back-end foi enfrentado e como foi resolvido?
+
+O principal ponto de integração é a comunicação entre uma página servida em uma origem/porta diferente da API (front-end em localhost:5500 e Spring Boot em localhost:8080). Sem CORS, o navegador pode bloquear a chamada mesmo que a API esteja ativa. O controller libera explicitamente as origens locais previstas, e o front-end centraliza o endereço da API em frontend/config.js. Também padronizei o JSON com os mesmos nomes nos dois lados (titulo, autor, isbn, genero e exemplares) e tratei respostas sem corpo (204) separadamente. Após iniciar os serviços locais, o usuário confirmou que o sistema funcionou e que conseguiu consultar os dados no MySQL.
+
+2. Contrato da API e validação: Como o front-end trata as respostas 400, 404 e 409? Por que o back-end precisa validar dados mesmo que o front-end já valide?
+
+As chamadas usam um helper único que verifica response.ok, lê o JSON de erro e mostra a mensagem retornada pela API na área de aviso. Assim, 400 exibe os detalhes de campos inválidos, 404 informa que o registro não foi encontrado e 409 apresenta o conflito de ISBN duplicado. O front-end também impede campos vazios, título curto e quantidade negativa, mas isso serve à experiência do usuário, não à segurança da regra: qualquer cliente pode contornar o navegador e chamar a API diretamente. Por isso, LivroRequest aplica Bean Validation e LivroService repete a regra de unicidade do ISBN; além disso, a restrição única no MySQL protege contra duplicação concorrente. A API define os status apropriados: 201, 200, 204, 400, 404 e 409.
+
+3. Uso crítico de IA: Qual foi o prompt mais importante, que imperfeição foi verificada e corrigida? Por que não copiar e colar sem testar?
+
+O prompt mais importante foi solicitar uma aplicação CRUD completa, especificando previamente entidade/campos, rotas REST, validações, status HTTP, camadas Spring Boot, MySQL, interface em JavaScript, CORS e o registro honesto das limitações dos testes. Isso ajudou a manter um contrato comum entre as partes. Na revisão estática, conferi dois riscos comuns destacados no próprio enunciado: imports javax.persistence incompatíveis com Spring Boot 3 e respostas 200 genéricas para todas as operações. A implementação usa jakarta.persistence e separa os status de criação, consulta, exclusão e erros. A API foi empacotada com o Maven incluído no IntelliJ IDEA, e o usuário confirmou a execução e a consulta ao banco MySQL. Foram adicionados testes MVC para criação, listagem, atualização, exclusão, validação (400), ISBN duplicado (409) e livro ausente (404); eles simulam o serviço e não substituem um teste de integração com MySQL. As capturas do Postman ainda precisam ser geradas. Copiar código de IA sem executar pode deixar erros de compilação, falhas de CORS, regras de negócio incompletas, exposição de dados ou respostas incompatíveis com o cliente; é necessário revisar, testar as rotas e confirmar a persistência no banco.
+
+Registro dos prompts de IA utilizados
+-------------------------------------
+Prompt principal deste trabalho: “Desenvolva a atividade conforme solicitado nas imagens. Implemente o sistema BiblioTech com API REST Spring Boot 3/Java 17+, MySQL, entidade Livro com id, título, autor, ISBN único, gênero e exemplares; CRUD nos endpoints definidos; Bean Validation, respostas 400/404/409 e status HTTP corretos; front-end web para listar, cadastrar, editar e excluir consumindo JSON e tratando erros; CORS; documentação do contrato, instruções de execução, coleção Postman, respostas das três perguntas críticas e registro dos prompts. Não invente evidências de testes que não foram executados.”
+
+Prompt de revisão: “Revise a estrutura quanto ao contrato REST, validação, jakarta.persistence, duplicidade de ISBN, segurança contra injeção/XSS e clareza das instruções. Registre honestamente limitações de execução e evidências.”
+
+Nota de honestidade: os prompts acima registram os pedidos usados para produzir e revisar esta entrega. Capturas do Postman, do MySQL e do front-end devem ser geradas após executar a aplicação; nenhum print foi fabricado.

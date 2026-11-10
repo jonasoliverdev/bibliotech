@@ -1,0 +1,19 @@
+{
+  "info": {
+    "_postman_id": "a9a8800b-4edf-4b34-94e2-040d4f1d8a81",
+    "name": "BiblioTech API",
+    "description": "CRUD de livros. Inicie a API Spring Boot antes de executar as requisições.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{"key": "baseUrl", "value": "http://localhost:8080/api/livros"}, {"key": "id", "value": "1"}],
+  "item": [
+    {"name": "Listar livros", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}"}},
+    {"name": "Cadastrar livro", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"titulo\": \"O Hobbit\",\n  \"autor\": \"J. R. R. Tolkien\",\n  \"isbn\": \"9788595084742\",\n  \"genero\": \"Fantasia\",\n  \"exemplares\": 4\n}", "options": {"raw": {"language": "json"}}}, "url": "{{baseUrl}}"}},
+    {"name": "Buscar por ID", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/{{id}}"}},
+    {"name": "Atualizar livro", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"titulo\": \"O Hobbit - edição revisada\",\n  \"autor\": \"J. R. R. Tolkien\",\n  \"isbn\": \"9788595084742\",\n  \"genero\": \"Fantasia\",\n  \"exemplares\": 5\n}", "options": {"raw": {"language": "json"}}}, "url": "{{baseUrl}}/{{id}}"}},
+    {"name": "Excluir livro", "request": {"method": "DELETE", "header": [], "url": "{{baseUrl}}/{{id}}"}},
+    {"name": "Validar ISBN duplicado (409)", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"titulo\": \"Outro título\",\n  \"autor\": \"Autor de teste\",\n  \"isbn\": \"9788595084742\",\n  \"genero\": \"Teste\",\n  \"exemplares\": 1\n}", "options": {"raw": {"language": "json"}}}, "url": "{{baseUrl}}"}},
+    {"name": "Validar livro inexistente (404)", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/999999"}},
+    {"name": "Validar dados inválidos (400)", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"titulo\": \"x\",\n  \"autor\": \"\",\n  \"isbn\": \"\",\n  \"genero\": \"Teste\",\n  \"exemplares\": -1\n}", "options": {"raw": {"language": "json"}}}, "url": "{{baseUrl}}"}}
+  ]
+}

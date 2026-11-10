@@ -1,0 +1,11 @@
+# Java / Maven
+backend/target/
+*.class
+*.log
+
+# Node (o front-end não necessita de dependências)
+node_modules/
+
+# Segredos e configurações locais
+.env
+application-local.properties

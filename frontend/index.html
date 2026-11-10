@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b39">
+  <title>BiblioTech | Acervo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="config.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#inicio" aria-label="BiblioTech início"><span class="brand-mark">B</span><span>Biblio<span class="brand-light">Tech</span></span></a>
+    <span class="topbar-note">Sistema de acervo</span>
+  </header>
+  <main class="page" id="inicio">
+    <section class="hero">
+      <div><p class="eyebrow">BIBLIOTECA · ACERVO DIGITAL</p><h1>Conhecimento em<br><span>boas mãos.</span></h1><p class="hero-copy">Organize, encontre e mantenha seu acervo sempre atualizado.</p></div>
+      <div class="hero-art" aria-hidden="true"><span class="book book-one"></span><span class="book book-two"></span><span class="book book-three"></span><span class="art-orbit"></span></div>
+    </section>
+    <section class="workspace" aria-label="Gerenciamento de livros">
+      <div class="list-panel">
+        <div class="section-heading"><div><p class="eyebrow">CATÁLOGO</p><h2>Livros cadastrados</h2></div><span class="count-pill" id="book-count">0 livros</span></div>
+        <div class="toolbar"><label class="search-box"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Buscar por título, autor ou ISBN" aria-label="Buscar livros"></label><button class="button button-quiet" id="refresh" type="button">Atualizar</button></div>
+        <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+        <div id="loading" class="loading" hidden>Carregando acervo…</div>
+        <div id="empty" class="empty-state" hidden><span class="empty-icon">▤</span><strong>Nenhum livro por aqui ainda</strong><span>Use o formulário ao lado para adicionar o primeiro título.</span></div>
+        <div class="table-wrap"><table><thead><tr><th>Livro</th><th>ISBN</th><th>Gênero</th><th>Exemplares</th><th><span class="sr-only">Ações</span></th></tr></thead><tbody id="book-list"></tbody></table></div>
+      </div>
+      <aside class="form-panel" id="form-panel">
+        <p class="eyebrow" id="form-eyebrow">NOVO REGISTRO</p><h2 id="form-title">Adicionar livro</h2><p class="form-intro">Preencha os dados para incluir um título no acervo.</p>
+        <form id="book-form" novalidate>
+          <label for="titulo">Título <span>*</span></label><input id="titulo" name="titulo" type="text" minlength="3" maxlength="150" required placeholder="Ex.: O Hobbit">
+          <label for="autor">Autor <span>*</span></label><input id="autor" name="autor" type="text" maxlength="150" required placeholder="Nome do autor">
+          <label for="isbn">ISBN <span>*</span></label><input id="isbn" name="isbn" type="text" maxlength="40" required placeholder="Identificador único">
+          <label for="genero">Gênero <span>*</span></label><input id="genero" name="genero" type="text" maxlength="100" required placeholder="Ex.: Fantasia">
+          <label for="exemplares">Exemplares disponíveis <span>*</span></label><input id="exemplares" name="exemplares" type="number" min="0" step="1" required value="0">
+          <div class="form-actions"><button class="button button-primary" id="submit-button" type="submit">Salvar livro</button><button class="button button-quiet" id="cancel-edit" type="button" hidden>Cancelar</button></div>
+        </form>
+        <p class="required-note">* Campos obrigatórios</p>
+      </aside>
+    </section>
+    <footer class="footer"><span>BiblioTech</span><span>Seu acervo, em ordem.</span></footer>
+  </main>
+  <dialog id="delete-dialog" class="delete-dialog"><form method="dialog"><p class="eyebrow">CONFIRMAR AÇÃO</p><h2>Remover este livro?</h2><p>O registro será excluído do acervo. Esta ação não pode ser desfeita.</p><div class="form-actions"><button class="button button-danger" id="confirm-delete" value="confirm">Excluir livro</button><button class="button button-quiet" value="cancel">Cancelar</button></div></form></dialog>
+</body>
+</html>

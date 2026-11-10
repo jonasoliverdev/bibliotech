@@ -1,0 +1,184 @@
+{
+  "info": {
+    "_postman_id": "c82a03e4-ec7b-4dd1-90c9-1923b33d3a29",
+    "name": "BiblioTech - Evidências reais do CRUD",
+    "description": "Fluxo seguro de evidência: cria um ISBN temporário exclusivo, valida o contrato e exclui o próprio registro ao final.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8080/api/livros" },
+    { "key": "testIsbn", "value": "" },
+    { "key": "createdId", "value": "" }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.collectionVariables.set('testIsbn', 'EV-' + pm.variables.replaceIn('{{$guid}}'));"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Listar livros (200)",
+      "request": { "method": "GET", "url": "{{baseUrl}}" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('Lista retorna 200', function () { pm.response.to.have.status(200); });"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cadastrar livro temporário (201)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"titulo\":\"Livro de evidência\",\"autor\":\"Teste automatizado\",\"isbn\":\"{{testIsbn}}\",\"genero\":\"Teste\",\"exemplares\":2}"
+        },
+        "url": "{{baseUrl}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Cadastro retorna 201', function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set('createdId', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Buscar registro criado (200)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/{{createdId}}" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Busca retorna 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('ISBN corresponde ao registro criado', function () { pm.expect(pm.response.json().isbn).to.eql(pm.collectionVariables.get('testIsbn')); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Atualizar livro temporário (200)",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"titulo\":\"Livro de evidência atualizado\",\"autor\":\"Teste automatizado\",\"isbn\":\"{{testIsbn}}\",\"genero\":\"Teste\",\"exemplares\":3}"
+        },
+        "url": "{{baseUrl}}/{{createdId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Atualização retorna 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Atualização persistiu exemplares', function () { pm.expect(pm.response.json().exemplares).to.eql(3); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validar dados inválidos (400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"titulo\":\"x\",\"autor\":\"\",\"isbn\":\"\",\"genero\":\"Teste\",\"exemplares\":-1}"
+        },
+        "url": "{{baseUrl}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('Validação retorna 400', function () { pm.response.to.have.status(400); });"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validar ISBN duplicado (409)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"titulo\":\"Outro livro\",\"autor\":\"Teste automatizado\",\"isbn\":\"{{testIsbn}}\",\"genero\":\"Teste\",\"exemplares\":1}"
+        },
+        "url": "{{baseUrl}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('ISBN repetido retorna 409', function () { pm.response.to.have.status(409); });"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validar ID inexistente (404)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/999999999" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('ID inexistente retorna 404', function () { pm.response.to.have.status(404); });"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Excluir livro temporário (204)",
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/{{createdId}}" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('Exclusão retorna 204', function () { pm.response.to.have.status(204); });"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Confirmar exclusão (404)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/{{createdId}}" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('Registro removido retorna 404', function () { pm.response.to.have.status(404); });"]
+          }
+        }
+      ]
+    }
+  ]
+}
